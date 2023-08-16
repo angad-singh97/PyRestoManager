@@ -1,3 +1,6 @@
+from tkinter import Toplevel, Label, Button, TOP, ttk, LEFT
+from tkinter.ttk import Frame
+
 from database.sql_operations import connect_to_database
 
 
@@ -190,24 +193,32 @@ def empl_list_item_populate():
 
         print("No employees added yet...")
 
+frames_to_keep = []
 
-def employee_editor_open():
-    global employee_editor_screen
-    employee_editor_screen = Toplevel(main_home_screen)
-    employee_editor_screen.title("Menu Editor")
-    employee_editor_screen.geometry("640x480")
-    Label(employee_editor_screen, text="Welcome " + username1).pack()
-    Label(employee_editor_screen, text="").pack()
 
-    top = Frame(employee_editor_screen)
+def clearMenuEditScreen(menuEditScreen):
+    for widget in menuEditScreen.winfo_children():
+        if isinstance(widget, ttk.Frame) and widget.winfo_id() not in frames_to_keep:
+            widget.destroy()
+
+
+def employee_editor_open(homeScreen, username1):
+    homeScreen.withdraw()
+    emplEditScreen = Toplevel(homeScreen)
+    emplEditScreen.title("Menu Editor")
+    emplEditScreen.geometry("640x480")
+    Label(emplEditScreen, text="Welcome " + username1).pack()
+    Label(emplEditScreen, text="").pack()
+
+    top = Frame(emplEditScreen)
+    frames_to_keep.append(top.winfo_id())
     top.pack(side=TOP)
-    Button(employee_editor_screen, text="Add Employee Data", command=empl_add_item_populate).pack(in_=top, side=LEFT)
-    Label(employee_editor_screen, text="").pack()
-    Button(employee_editor_screen, text="Modify Employee Data", command=empl_mod_item_populate).pack(in_=top, side=LEFT)
-    Label(employee_editor_screen, text="").pack()
-    Button(employee_editor_screen, text="Remove Employee", command=empl_delete_item_populate).pack(in_=top, side=LEFT)
-    Label(employee_editor_screen, text="").pack()
-    Button(employee_editor_screen, text="List Employees", command=empl_list_item_populate).pack(in_=top, side=LEFT)
-    global empl_error_label
-    empl_error_label = Label(employee_editor_screen, text="")
+    Button(emplEditScreen, text="Add Employee Data", command=lambda:empl_add_item_populate(emplEditScreen)).pack(in_=top, side=LEFT)
+    Label(emplEditScreen, text="").pack()
+    Button(emplEditScreen, text="Modify Employee Data", command=lambda:empl_mod_item_populate(emplEditScreen)).pack(in_=top, side=LEFT)
+    Label(emplEditScreen, text="").pack()
+    Button(emplEditScreen, text="Remove Employee", command=lambda:empl_delete_item_populate(emplEditScreen)).pack(in_=top, side=LEFT)
+    Label(emplEditScreen, text="").pack()
+    Button(emplEditScreen, text="List Employees", command=lambda:empl_list_item_populate(emplEditScreen)).pack(in_=top, side=LEFT)
+    empl_error_label = Label(emplEditScreen, text="")
     empl_error_label.pack()

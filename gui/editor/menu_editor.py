@@ -1,150 +1,122 @@
-from database.sql_operations import add_menu_item, connect_to_database
+from tkinter import Toplevel, Label, Button, TOP, LEFT, ttk, END, Entry, StringVar
+from tkinter.ttk import Frame
+
+from database.menu_sql_operations import listMenuItemSQL, addMenuItemSQL, deleteMenuItemSQL
+
+defaultWidgets = []
+deleteWidgets = []
+addWidgets = []
+# editWidgets = []
+def resetToDefaultElements(screen, list):
+    for widget in screen.winfo_children():
+        if widget.winfo_id() not in list:
+            widget.destroy()
+
+def saveDefaultElements(screen, list):
+    list.clear()
+    for widget in screen.winfo_children():
+        list.append(widget.winfo_id())
 
 
-def add_menu_sql():
-    search_item = add_item_name.get()
-    search_price = add_item_price.get()
 
-    result_message = add_menu_item(username1, search_item, search_price)
+def addMenuItem(itemName, itemPrice, itemNameField, itemPriceField, panel, username):
+    search_item = itemName.get()
+    search_price = itemPrice.get()
 
-    menu_error_label['text'] = result_message
-    if "already exists" in result_message:
-        menu_error_label['fg'] = "red"
+    result_message = addMenuItemSQL(username, search_item, search_price)
+
+    if "already exists" not in result_message:
+        resetToDefaultElements(panel,addWidgets)
+        Label(panel, text=result_message, fg="green", font=("calibri,12")).pack()
     else:
-        menu_error_label['fg'] = "green"
-    menu_error_label['font'] = ("calibri", 11)
-    additemnameval.delete(0, END)
-    additempriceval.delete(0, END)
+        resetToDefaultElements(panel,addWidgets)
+        itemNameField.delete(0, END)
+        itemPriceField.delete(0, END)
+        Label(panel, text=result_message, fg="red", font=("calibri,12")).pack()
 
 
-def add_menu_item(username, item_name, item_price):
-    conn = connect_to_database('mydatabase.db')
-    cursor = conn.cursor()
+def deleteMenuItem(username1, deleteitemnameval, delete_item_name, panel):
+    resObj = deleteMenuItemSQL(username1, delete_item_name.get())
 
-    cursor.execute("SELECT name,price FROM {} WHERE name = ?".format(username), (item_name,))
-    rows = cursor.fetchall()
-
-    if len(rows) > 0:
-        cursor.execute("UPDATE {} SET name=?, price=? WHERE name=?".format(username), (item_name, item_price, item_name))
-        conn.commit()
-        conn.close()
-        return "Item already exists. Updated values successfully."
+    if resObj == True:
+        resetToDefaultElements(panel,deleteWidgets)
+        Label(panel, text="Item deleted successfully.", fg="green", font=("calibri,12")).pack()
     else:
-        cursor.execute("INSERT INTO {}(name, price) VALUES (?, ?)".format(username), (item_name, item_price))
-        cursor.execute("UPDATE restos SET menucount = menucount+1 WHERE name=?", (username,))
-        conn.commit()
-        conn.close()
-        return "Item Added Successfully."
-
-
-def delete_menu_sql():
-    search_delete_item = delete_item_name.get()
-
-    cursorObj.execute("SELECT * from " + username1 + " where name = ?", (search_delete_item,))
-
-    rows = cursorObj.fetchall()
-
-    if (len(rows) > 0):
-        cursorObj.execute("DELETE FROM " + username1 + " where name=?", (search_delete_item,))
-        cursorObj.execute("UPDATE restos SET menucount = menucount-1 where name=?", (username1,))
-        con.commit()
-        menu_error_label['text'] = "Item deleted successfully."
-        menu_error_label['fg'] = "green"
-        menu_error_label['font'] = ("calibri", 11)
-
-    else:
-
+        resetToDefaultElements(panel,deleteWidgets)
         deleteitemnameval.delete(0, END)
-        menu_error_label['text'] = "No such item."
-        menu_error_label['fg'] = "red"
-        menu_error_label['font'] = ("calibri", 11)
+        Label(panel, text="No such item.", fg="red", font=("calibri,12")).pack()
 
 
-def menu_add_item_populate():
-    menu_editor_screen.destroy()
-    menu_editor_open()
+def showMenuAddUI(menuEditScreen, username):
+    resetToDefaultElements(menuEditScreen, defaultWidgets)
+    addMenuItemFrame = Frame(menuEditScreen)
+    addMenuItemFrame.pack(padx=10, pady=10, expand=True, fill="both")
+    itemName = StringVar()
+    itemPrice = StringVar()
+    Label(addMenuItemFrame, text="Item Name").pack()
+    Label(addMenuItemFrame, text="").pack()
+    itemNameField = Entry(addMenuItemFrame, textvariable=itemName)
+    itemNameField.pack()
+    Label(addMenuItemFrame, text="").pack()
+    Label(addMenuItemFrame, text="Item Price").pack()
+    Label(addMenuItemFrame, text="").pack()
+    itemPriceField = Entry(addMenuItemFrame, textvariable=itemPrice)
+    itemPriceField.pack()
+    Label(addMenuItemFrame, text="").pack()
+    Button(addMenuItemFrame, text="Add", command=lambda:addMenuItem(itemName, itemPrice, itemNameField, itemPriceField, addMenuItemFrame, username)).pack()
+    Label(addMenuItemFrame, text="").pack()
+    saveDefaultElements(addMenuItemFrame, addWidgets)
 
-    global add_item_name
-    global add_item_price
-    add_item_name = StringVar()
-    add_item_price = StringVar()
+def showMenuDeleteUI(menuEditScreen, username):
+    resetToDefaultElements(menuEditScreen, defaultWidgets)
+    deleteMenuItemFrame = Frame(menuEditScreen)
+    deleteMenuItemFrame.pack(padx=10, pady=10, expand=True, fill="both")
+    itemName = StringVar()
+    Label(deleteMenuItemFrame, text="Item Name", fg="white", bg="black", font=("Arial", 14)).pack()
+    Label(deleteMenuItemFrame, text="").pack()
+    itemNameField = Entry(deleteMenuItemFrame, textvariable=itemName)
+    itemNameField.pack()
+    Label(deleteMenuItemFrame, text="").pack()
+    Label(deleteMenuItemFrame, text="").pack()
+    Button(deleteMenuItemFrame, text="Delete", command=lambda: deleteMenuItem(username, itemNameField, itemName, deleteMenuItemFrame),
+           fg="white", bg="black", font=("Arial", 14)).pack()
+    Label(deleteMenuItemFrame, text="").pack()
+    saveDefaultElements(deleteMenuItemFrame,deleteWidgets)
 
-    global additemnameval
-    global additempriceval
-
-    Label(menu_editor_screen, text="Item Name").pack()
-    Label(menu_editor_screen, text="").pack()
-    additemnameval = Entry(menu_editor_screen, textvariable=add_item_name)
-    additemnameval.pack()
-    Label(menu_editor_screen, text="").pack()
-    Label(menu_editor_screen, text="Item Price").pack()
-    Label(menu_editor_screen, text="").pack()
-    additempriceval = Entry(menu_editor_screen, textvariable=add_item_price)
-    additempriceval.pack()
-    Label(menu_editor_screen, text="").pack()
-    Button(menu_editor_screen, text="Add", command=add_menu_sql).pack()
-    Label(menu_editor_screen, text="").pack()
-
-    ########################## -----ADD/MODIFY POPULATE FUNCTIONS############################################
-
-
-########################## DELETE POPULATE FUNCTIONS############################################
-def menu_delete_item_populate():
-    menu_editor_screen.destroy()
-    menu_editor_open()
-
-    global delete_item_name
-    delete_item_name = StringVar()
-
-    global deleteitemnameval
-
-    Label(menu_editor_screen, text="Item Name").pack()
-    Label(menu_editor_screen, text="").pack()
-    deleteitemnameval = Entry(menu_editor_screen, textvariable=delete_item_name)
-    deleteitemnameval.pack()
-    Label(menu_editor_screen, text="").pack()
-    Label(menu_editor_screen, text="").pack()
-    Button(menu_editor_screen, text="Delete", command=delete_menu_sql).pack()
-    Label(menu_editor_screen, text="").pack()
-
-
-def menu_list_item_populate():
-    menu_editor_screen.destroy()
-    menu_editor_open()
-
-    cursorObj.execute("SELECT * from " + username1)
-
-    rows = cursorObj.fetchall()
-
-    if (len(rows) > 0):
-        tree = ttk.Treeview(menu_editor_screen, column=("Id", "Name", "Price"), show='headings')
+def showMenuListUI(menuEditScreen, username):
+    resetToDefaultElements(menuEditScreen, defaultWidgets)
+    menuListObj = listMenuItemSQL(username)
+    if menuListObj is not None:
+        panel = Frame(menuEditScreen)
+        panel.pack(padx=10, pady=10, expand=True, fill="both")
+        tree = ttk.Treeview(panel, column=("Id", "Name", "Price"), show='headings', style="Custom.Treeview")
         tree.heading("#1", text="ID")
         tree.heading("#2", text="NAME")
         tree.heading("#3", text="PRICE")
-        for row in rows:
-            print(row)
-            tree.insert("", tk.END, values=row)
-        tree.pack()
+        tree.pack(side="top", fill="both", expand=True)
+        tree.tag_configure("Custom.Treeview", font=("Arial", 14), background="black", foreground="white")
+        for row in menuListObj:
+            tree.insert("", END, values=row)
 
-    else:
 
-        print("No items added yet...")
-
-def menu_editor_open():
-    global menu_editor_screen
-    menu_editor_screen = Toplevel(main_home_screen)
-    menu_editor_screen.title("Menu Editor")
-    menu_editor_screen.geometry("640x480")
-    Label(menu_editor_screen, text="Welcome " + username1).pack()
-    Label(menu_editor_screen, text="").pack()
-
-    top = Frame(menu_editor_screen)
+def showMenuEditorUI(homeScreen, username):
+    homeScreen.withdraw()
+    menuEditScreen = Toplevel(homeScreen)
+    menuEditScreen.title("Menu Editor")
+    menuEditScreen.geometry("640x480")
+    Label(menuEditScreen, text="Welcome " + username).pack()
+    Label(menuEditScreen, text="").pack()
+    top = Frame(menuEditScreen)
     top.pack(side=TOP)
-    Button(menu_editor_screen, text="Add/Modify Items", command=menu_add_item_populate).pack(in_=top, side=LEFT)
-    Label(menu_editor_screen, text="").pack()
-    Button(menu_editor_screen, text="Remove Items", command=menu_delete_item_populate).pack(in_=top, side=LEFT)
-    Label(menu_editor_screen, text="").pack()
-    Button(menu_editor_screen, text="List Items", command=menu_list_item_populate).pack(in_=top, side=LEFT)
-    global menu_error_label
-    menu_error_label = Label(menu_editor_screen, text="")
+    Button(menuEditScreen, text="Add/Modify Items", command=lambda: showMenuAddUI(menuEditScreen,username)).pack(
+        in_=top, side=LEFT)
+    Label(menuEditScreen, text="\n\n\n").pack()
+    Button(menuEditScreen, text="Remove Items",
+           command=lambda: showMenuDeleteUI(menuEditScreen, username)).pack(in_=top,
+                                                                            side=LEFT)
+    Label(menuEditScreen, text="\n\n\n").pack()
+    Button(menuEditScreen, text="List Items", command=lambda: showMenuListUI(menuEditScreen, username)).pack(
+        in_=top, side=LEFT)
+    menu_error_label = Label(menuEditScreen, text="")
     menu_error_label.pack()
+    saveDefaultElements(menuEditScreen, defaultWidgets)

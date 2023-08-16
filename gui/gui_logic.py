@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from gui.editor.employee_editor import employee_editor_open
+from gui.editor.menu_editor import showMenuEditorUI
 from gui.userMgmt.login import loginUser
 from gui.userMgmt.register import registerUser
 
@@ -72,6 +74,7 @@ def login_run_logic(username, password, userentry, passentry, login_screen, main
     if (result_enum == 0):
         # tk.Button(register_screen, text="Go Home",
         #           command=lambda: register_success(register_screen, main_screen)).pack()
+        show_home_screen(username.get(),login_screen, main_screen)
         print("logging in now.")
     elif (result_enum == 1):
         print("wrong password")
@@ -84,4 +87,15 @@ def login_success(register_screen, main_screen):
     main_screen.deiconify()  # Show the main screen again
 
 
-# def show_home_screen
+def show_home_screen(username1,login_screen2, main_screen):
+    login_screen2.destroy()
+    homeScreen = tk.Toplevel(main_screen)
+    homeScreen.title("Home Screen Open Now")
+    homeScreen.geometry("640x480+100+100")
+
+
+    tk.Label(homeScreen, text="Welcome " + username1).pack()
+    tk.Label(homeScreen, text="").pack()
+    tk.Button(homeScreen, text="Menu Editor", command=lambda:showMenuEditorUI(homeScreen, username1)).pack()
+    tk.Label(homeScreen, text="").pack()
+    tk.Button(homeScreen, text="Employee Editor", command=lambda:employee_editor_open(homeScreen, username1)).pack()
