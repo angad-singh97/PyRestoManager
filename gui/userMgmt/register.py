@@ -1,6 +1,4 @@
-from tkinter import StringVar, Label, Entry, Button, Frame
-
-from database.register_sql_operations import register_user_sql
+from database.sql_operations.register_sql_operations import register_user_sql
 
 
 def registerUser(username, password):

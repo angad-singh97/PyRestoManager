@@ -1,6 +1,6 @@
-from tkinter import Toplevel, StringVar, Label, Entry, Button, Frame, END
+from tkinter import Toplevel, Label, Button, END
 
-from database.login_sql_operations import login_user_sql
+from database.sql_operations.login_sql_operations import login_user_sql
 
 
 # def login_sucess():

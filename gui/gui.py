@@ -7,9 +7,8 @@ class MainScreen(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Main Screen")
-        self.geometry("640x480+100+100")
+        self.geometry("640x480+200+200")
         self.configure(background='grey')
-        self.geometry("640x480")
         self.title("PyRestoManager")
 
         tk.Label(text="PyRestoManager", fg="white", bg="grey", width="900", height="2",

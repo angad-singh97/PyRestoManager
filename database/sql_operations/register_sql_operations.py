@@ -1,6 +1,6 @@
 # sql_operations.py
 
-from database.sql_operations import connect_to_database
+from database.sql_operations.sql_operations import connect_to_database
 
 
 def register_user_sql(username_info, password_info):

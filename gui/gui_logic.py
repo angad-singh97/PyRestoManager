@@ -10,7 +10,7 @@ def show_register_screen(main_screen):
     main_screen.withdraw()  # Hide the main screen
     register_screen = tk.Toplevel(main_screen)
     register_screen.title("Register User")
-    register_screen.geometry("640x480+100+100")
+    register_screen.geometry("640x480+200+200")
 
     username = tk.StringVar()
     password = tk.StringVar()
@@ -50,7 +50,7 @@ def show_login_screen(main_screen):
     main_screen.withdraw()  # Hide the main screen
     login_screen = tk.Toplevel(main_screen)
     login_screen.title("Login Screen Open Now")
-    login_screen.geometry("640x480+100+100")
+    login_screen.geometry("640x480+200+200")
 
     tk.Label(login_screen, text="Please enter details below to login").pack()
     tk.Label(login_screen, text="").pack()
@@ -64,8 +64,6 @@ def show_login_screen(main_screen):
     password_entry1 = tk.Entry(login_screen, show="*", textvariable=password_verify)
     password_entry1.pack()
     tk.Label(login_screen, text="").pack()
-
-    tk.Label(login_screen, text="Login Screen Label").pack()
     tk.Button(login_screen, text="Login Button", command=lambda: login_run_logic(username_verify, password_verify, username_entry1, password_entry1, login_screen, main_screen)).pack()
 
 
@@ -91,7 +89,7 @@ def show_home_screen(username1,login_screen2, main_screen):
     login_screen2.destroy()
     homeScreen = tk.Toplevel(main_screen)
     homeScreen.title("Home Screen Open Now")
-    homeScreen.geometry("640x480+100+100")
+    homeScreen.geometry("640x480+200+200")
 
 
     tk.Label(homeScreen, text="Welcome " + username1).pack()

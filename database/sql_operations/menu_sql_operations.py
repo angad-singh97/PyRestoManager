@@ -1,6 +1,4 @@
-import sqlite3
-
-from database.sql_operations import connect_to_database
+from database.sql_operations.sql_operations import connect_to_database
 
 def addMenuItemSQL(username, item_name, item_price):
     conn = connect_to_database('mydatabase.db')

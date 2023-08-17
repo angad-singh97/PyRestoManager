@@ -1,7 +1,7 @@
 from tkinter import Toplevel, Label, Button, TOP, LEFT, ttk, END, Entry, StringVar
 from tkinter.ttk import Frame
 
-from database.menu_sql_operations import listMenuItemSQL, addMenuItemSQL, deleteMenuItemSQL
+from database.sql_operations.menu_sql_operations import listMenuItemSQL, addMenuItemSQL, deleteMenuItemSQL
 
 defaultWidgets = []
 deleteWidgets = []
@@ -103,7 +103,7 @@ def showMenuEditorUI(homeScreen, username):
     homeScreen.withdraw()
     menuEditScreen = Toplevel(homeScreen)
     menuEditScreen.title("Menu Editor")
-    menuEditScreen.geometry("640x480")
+    menuEditScreen.geometry("640x480+200+200")
     Label(menuEditScreen, text="Welcome " + username).pack()
     Label(menuEditScreen, text="").pack()
     top = Frame(menuEditScreen)
